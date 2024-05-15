@@ -1,8 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Core;
+using Azure;
+using Microsoft.EntityFrameworkCore;
 using MVC_Pustok.Data;
 using MVC_Pustok.Models;
 using MVC_Pustok.ViewModels;
+using System.Net;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace MVC_Pustok.Services
 {
@@ -51,6 +55,36 @@ namespace MVC_Pustok.Services
                 }).ToList();
 
                 vm.TotalPrice = vm.Items.Sum(x => x.Count * x.BookPrice);
+            }
+            else
+            {
+                var cookieBasket = _httpContextAccessor.HttpContext.Request.Cookies["basket"];
+
+                if (cookieBasket != null)
+                {
+                    List<BasketCookieItemViewModel> cookieItemsVM = JsonSerializer.Deserialize<List<BasketCookieItemViewModel>>(cookieBasket);
+                    ;
+                    foreach (var cookieItem in cookieItemsVM)
+                    {
+                        Book? book = _context.Books.Include(x => x.BookImages.Where(bi => bi.PosterStatus == true)).FirstOrDefault(x => x.Id == cookieItem.BookId );
+
+                        if (book != null)
+                        {
+                            BasketItemViewModel itemVM = new BasketItemViewModel
+                            {
+                                BookId = cookieItem.BookId,
+                                Count = cookieItem.Count,
+                                BookName = book.Name,
+                                BookPrice = book.DiscountPerc > 0 ? (book.SalePrice * (100 - book.DiscountPerc) / 100) : book.SalePrice,
+                                BookImage = book.BookImages.FirstOrDefault(x => x.PosterStatus == true)?.Name
+                            };
+                            vm.Items.Add(itemVM);
+                        }
+
+                    }
+
+                    vm.TotalPrice = vm.Items.Sum(x => x.Count * x.BookPrice);
+                }
             }
 
             return vm;

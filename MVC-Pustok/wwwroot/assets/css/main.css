@@ -21514,3 +21514,8 @@ p.form-messege {
           transform: rotate(90deg); }
   .accordion .card .card-body {
     padding: 0 30px 30px; }
+
+.green-icon {
+    color: green !important; 
+}
+

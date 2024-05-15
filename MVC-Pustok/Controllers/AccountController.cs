@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MVC_Pustok.Areas.Admin.ViewModels;
 using MVC_Pustok.Data;
 using MVC_Pustok.Models;
@@ -77,8 +78,10 @@ namespace MVC_Pustok.Controllers
                     FullName = user.FullName,
                     Email = user.Email,
                     UserName = user.UserName
-                }
-            };
+                },
+				Orders = _context.Orders.Include(x => x.OrderItems).ThenInclude(oi => oi.Book)
+						.OrderByDescending(x => x.CreatedAt).Where(x => x.AppUserId == user.Id).ToList()
+			};
             ViewBag.Tab = tab;
             return View(pvm);
 
@@ -89,7 +92,7 @@ namespace MVC_Pustok.Controllers
         public async Task<IActionResult> Profile(ProfileEditViewModel pEditVM, string tab = "profile")
         {
             ViewBag.Tab = tab;
-            ProfileViewModel profileVM = new ProfileViewModel();
+			ProfileViewModel profileVM = new ProfileViewModel();
             profileVM.ProfEditVM = pEditVM;
 
             if (!ModelState.IsValid) return View(profileVM);
@@ -98,7 +101,8 @@ namespace MVC_Pustok.Controllers
 
             if (user == null) return RedirectToAction("login", "account");
 
-            user.UserName = pEditVM.UserName;
+
+			user.UserName = pEditVM.UserName;
             user.Email = pEditVM.Email;
             user.FullName = pEditVM.FullName;
 
@@ -120,9 +124,10 @@ namespace MVC_Pustok.Controllers
                     return View(profileVM);
                 }
             }
+			
 
 
-            var result = await _userManager.UpdateAsync(user);
+			var result = await _userManager.UpdateAsync(user);
 
             if (!result.Succeeded)
             {
@@ -136,6 +141,7 @@ namespace MVC_Pustok.Controllers
             }
 
             await _signInManager.SignInAsync(user, false);
+            
 
             return View(profileVM);
         }

@@ -19,12 +19,12 @@ namespace MVC_Pustok.Models
         [MaxLength(500)]
         public string? Note { get; set; }
 
-        public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? ModifiedAt { get; set; }
 
         public OrderStatus Status { get; set; }
         public AppUser? AppUser { get; set; }
 
-        //public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 }
