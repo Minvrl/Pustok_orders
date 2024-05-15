@@ -1,0 +1,46 @@
+﻿@model MemberLoginViewModel
+@{
+	ViewData["Title"] = "Login";
+}
+
+
+<section class="breadcrumb-section">
+	<h2 class="sr-only">Site Breadcrumb</h2>
+	<div class="container">
+		<div class="breadcrumb-contents">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="index.html">Home</a></li>
+					<li class="breadcrumb-item active">Login</li>
+				</ol>
+			</nav>
+		</div>
+	</div>
+</section>
+<div class="container">
+
+	<div class="col-sm-12 col-md-12 col-lg-6 col-xs-12 mx-auto">
+		<form class="user" method="post">
+			<div class="login-form">
+				<h4 class="login-title">Returning Customer</h4>
+				<p><span class="font-weight-bold">I am a returning customer</span></p>
+				<div class="row">
+					<div class="col-md-12 col-12 mb--15">
+						<label for="email">Email adress</label>
+						<input asp-for="Email" class="mb-0 form-control" id="email1">
+					</div>
+					<div class="col-12 mb--20">
+						<label for="login-password">Password</label>
+						<input asp-for="Password" class="mb-0 form-control" id="login-password" >
+					</div>
+					<div class="text-danger" asp-validation-summary="ModelOnly"></div>
+					<div class="col-md-12">
+						<button type="submit" class="btn btn-outlined">Login</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+</div>
+

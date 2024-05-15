@@ -1,0 +1,282 @@
+﻿@model BookDetailViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+
+<section class="breadcrumb-section">
+    <h2 class="sr-only">Site Breadcrumb</h2>
+    <div class="container">
+        <div class="breadcrumb-contents">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item active">Product Details</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</section>
+<main class="inner-page-sec-padding-bottom">
+    <div class="container">
+        <div class="row  mb--60">
+            <div class="col-lg-5 mb--30">
+                <!-- Product Details Slider Big Image-->
+                <div class="product-details-slider sb-slick-slider arrow-type-two" data-slick-setting='{
+              "slidesToShow": 1,
+              "arrows": false,
+              "fade": true,
+              "draggable": false,
+              "swipe": false,
+              "asNavFor": ".product-slider-nav"
+              }'>
+                   @foreach (BookImgs item in Model.Book.BookImages.Where(x=> x.PosterStatus == null))
+                    {
+                        <div class="single-slide">
+                            <img src="~/assets/image/products/@item.Name" alt="">
+                        </div>
+                    }
+                </div>
+                <!-- Product Details Slider Nav -->
+                <div class="mt--30 product-slider-nav sb-slick-slider arrow-type-two" data-slick-setting='{
+            "infinite":true,
+              "autoplay": true,
+              "autoplaySpeed": 8000,
+              "slidesToShow": 4,
+              "arrows": true,
+              "prevArrow":{"buttonClass": "slick-prev","iconClass":"fa fa-chevron-left"},
+              "nextArrow":{"buttonClass": "slick-next","iconClass":"fa fa-chevron-right"},
+              "asNavFor": ".product-details-slider",
+              "focusOnSelect": true
+              }'>
+                    @foreach (BookImgs item in Model.Book.BookImages.Where(x => x.PosterStatus == null))
+                    {
+                        <div class="single-slide">
+                            <img src="~/assets/image/products/@item.Name" alt="">
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="product-details-info pl-lg--30 ">
+                    <p class="tag-block">
+                        Tags: @foreach (var item in Model.Book.BookTags)
+                        {
+                            <a>@item.Tag.Name,</a>
+                        }
+                    </p>
+                    <h3 class="product-title">@Model.Book.Name</h3>
+                    <ul class="list-unstyled">
+                        <li>Author: <a href="#" class="list-value font-weight-bold"> @Model.Book.Author.Fullname</a></li>
+                        <li>Genre: <span class="list-value"> @Model.Book.Genre.Name</span></li>
+                        <li class="text-info">@(Model.Book.IsFeatured ? "Is featured !" : "")</li>
+                        <li class="text-info">@(Model.Book.IsNew ? "Is new !" : "")</li>
+                        <li>Availability: <span class="list-value @(Model.Book.StockStatus? "": "text-danger")"> @(Model.Book.StockStatus ? "In stock" : "Out of stock")</span></li>
+                    </ul>
+                    <div class="price-block">
+                        @if (Model.Book.DiscountPerc > 0)
+                        {
+                            <span class="price">£@((Model.Book.SalePrice * (100 - Model.Book.DiscountPerc) / 100).ToString("0.00"))</span>
+                            <del class="price-old">£@Model.Book.SalePrice.ToString("0.00")</del>
+                            <span class="price-discount">@Model.Book.DiscountPerc.ToString("0.##")%</span>
+                            
+                        }
+                        else
+                        {
+                            <span class="price-new">£@Model.Book.SalePrice.ToString("0.00")</span>
+                        }
+                        
+                    </div>
+                    <div class="rating-widget">
+                        <div class="rating-block">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <span class="fas fa-star @(i<=Model.AvgRate?"star_on":"")"></span>
+
+                            }
+                        </div>
+                        <div class="review-widget">
+                            <a href="#">(@Model.TotalReviewsCount)</a> <span>|</span>
+                            <a href="#">Write a review</a>
+                        </div>
+                    </div>
+                    <article class="product-details-article">
+                        <h4 class="sr-only">Book Summary</h4>
+                        <p>
+                            @Model.Book.Desc
+                        </p>
+                    </article>
+                    <div class="add-to-cart-row">
+                        <div class="count-input-block">
+                            <span class="widget-label">Qty</span>
+                            <input type="number" class="form-control text-center" value="1">
+                        </div>
+                        <div class="add-cart-btn">
+                            <a href="#" class="btn btn-outlined--primary">
+                                <span class="plus-icon">+</span>Add to
+                                Cart
+                            </a>
+                        </div>
+                    </div>
+                    <div class="compare-wishlist-row">
+                        <a href="#" class="add-link"><i class="fas fa-heart"></i>Add to Wish List</a>
+                        <a href="#" class="add-link"><i class="fas fa-random"></i>Add to Compare</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sb-custom-tab review-tab section-padding">
+            <ul class="nav nav-tabs nav-style-2" id="myTab2" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="tab1" data-toggle="tab" href="#tab-1" role="tab"
+                       aria-controls="tab-1" aria-selected="true">
+                        DESCRIPTION
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="tab2" data-toggle="tab" href="#tab-2" role="tab"
+                       aria-controls="tab-2" aria-selected="true">
+                        REVIEWS (@Model.TotalReviewsCount)
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content space-db--20" id="myTabContent">
+                <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="tab1">
+                    <article class="review-article">
+                        <h1 class="sr-only">Tab Article</h1>
+                        <p>
+                            @Model.Book.Desc
+                        </p>
+                    </article>
+                </div>
+                <div class="tab-pane fade" id="tab-2" role="tabpanel" aria-labelledby="tab2">
+                    <div class="review-wrapper">
+                        <h2 class="title-lg mb--20">REVIEWS</h2>
+                        @foreach (var review in Model.Book.BookReviews)
+                        {
+                            <div class="review-comment mb--20">
+                                <div class="text">
+                                    <div class="rating-block mb--15">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            <span class="ion-android-star-outline @(i<=review.Rate?"star_on":"")"></span>
+                                        }
+                                    </div>
+                                    <h6 class="author">
+                                        @review.AppUser.FullName – <span class="font-weight-400">@review.CreatedAt.ToString("dd MMMM, yyyy")</span>
+                                    </h6>
+                                    <p>
+                                        @review.Text
+                                    </p>
+                                </div>
+                            </div>
+                        }
+                        @if (Model.TotalReviewsCount > Model.Book.BookReviews.Count)
+                        {
+                            <div class="text-center"><a href="#" class="load-more-comment">Load more...</a></div>
+                        }
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("member") && Model.Book.BookReviews.Any(x => x.AppUserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value))
+                        {
+                            <h3>You already reviewed this product</h3>
+                        }
+                        else
+                        {
+                            @Html.Partial("_BookReviewFormPartial", Model.Review)
+                        }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="tab-product-details">
+          <div class="brand">
+            <img src="~/assets/image/others/review-tab-product-details.jpg" alt="">
+          </div>
+          <h5 class="meta">Reference <span class="small-text">demo_5</span></h5>
+          <h5 class="meta">In stock <span class="small-text">297 Items</span></h5>
+          <section class="product-features">
+            <h3 class="title">Data sheet</h3>
+            <dl class="data-sheet">
+              <dt class="name">Compositions</dt>
+              <dd class="value">Viscose</dd>
+              <dt class="name">Styles</dt>
+              <dd class="value">Casual</dd>
+              <dt class="name">Properties</dt>
+              <dd class="value">Maxi Dress</dd>
+            </dl>
+          </section>
+        </div> -->
+    </div>
+    <!--=================================
+        RELATED PRODUCTS BOOKS
+    ===================================== -->
+    <section class="">
+        <div class="container">
+            <div class="section-title section-title--bordered">
+                <h2>RELATED PRODUCTS</h2>
+            </div>
+            <div class="product-slider sb-slick-slider slider-border-single-row" data-slick-setting='{
+                "autoplay": true,
+                "autoplaySpeed": 8000,
+                "slidesToShow": 4,
+                "dots":true
+            }' data-slick-responsive='[
+                {"breakpoint":1200, "settings": {"slidesToShow": 4} },
+                {"breakpoint":992, "settings": {"slidesToShow": 3} },
+                {"breakpoint":768, "settings": {"slidesToShow": 2} },
+                {"breakpoint":480, "settings": {"slidesToShow": 1} }
+            ]'>
+                @foreach (var book in Model.RelatedBooks)
+                {
+                    <div class="single-slide">
+                        <div class="product-card">
+                            <div class="product-header">
+                                <a href="#" class="author">
+                                    @book.Author.Fullname
+                                </a>
+                                <h3><a asp-controller="book" asp-action="details" asp-route-id="@book.Id">@book.Name</a></h3>
+                            </div>
+                            <div class="product-card--body">
+                                <div class="card-image">
+                                    <img src="~/uploads/book/@book.BookImages.FirstOrDefault(x=>x.PosterStatus==true)?.Name" alt="">
+                                    <div class="hover-contents">
+                                        <a href="product-details.html" class="hover-image">
+                                            <img src="~/uploads/book/@book.BookImages.FirstOrDefault(x=>x.PosterStatus==false)?.Name" alt="">
+                                        </a>
+                                        <div class="hover-btns">
+                                            <a href="cart.html" class="single-btn">
+                                                <i class="fas fa-shopping-basket"></i>
+                                            </a>
+                                            <a href="wishlist.html" class="single-btn">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
+                                            <a href="compare.html" class="single-btn">
+                                                <i class="fas fa-random"></i>
+                                            </a>
+                                            <a asp-controller="book" asp-action="getbookbyid" asp-route-id="@book.Id" class="single-btn book-modal">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="price-block">
+                                    @if (book.DiscountPerc > 0)
+                                    {
+                                        <span class="price">£@((book.SalePrice * (100 - book.DiscountPerc) / 100).ToString("0.00"))</span>
+                                        <del class="price-old">£@book.SalePrice.ToString("0.00")</del>
+                                        <span class="price-discount">@book.DiscountPerc.ToString("0.##")%</span>
+
+                                    }
+                                    else
+                                    {
+                                        <span class="price-new">£@book.SalePrice.ToString("0.00")</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                
+            </div>
+        </div>
+    </section>
